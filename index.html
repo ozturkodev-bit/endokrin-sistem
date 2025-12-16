@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Endokrin Sistem Öğrenme Portalı</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            border-color: #3498db;
+        }
+
+        .card i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #3498db;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #c0392b;
+            transform: translateX(-5px);
+        }
+
+        /* Flashcard Styles */
+        .flashcard-container {
+            width: 100%;
+            max-width: 700px;
+            height: 400px;
+            perspective: 1500px;
+            margin: 20px auto;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            cursor: pointer;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front,
+        .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+            border-radius: 20px;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(45deg, #9b59b6, #8e44ad);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(45deg, #ffffff, #f8f9fa);
+            color: #2c3e50;
+            transform: rotateY(180deg);
+            border: 3px solid #9b59b6;
+        }
+
+        .flashcard-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .flashcard-btn {
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .flashcard-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        /* Mind Map Styles */
+        .mindmap {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .mindmap-node {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .mindmap-node:hover {
+            transform: translateY(-5px);
+        }
+
+        .mindmap-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .mindmap-content {
+            list-style-type: none;
+        }
+
+        .mindmap-content li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #ddd;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .mindmap-content li:before {
+            content: "•";
+            color: #3498db;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Test Styles */
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid #2ecc71;
+            transition: transform 0.3s;
+        }
+
+        .question-card:hover {
+            transform: translateX(5px);
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #2ecc71;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .option:hover {
+            background: #f1f8ff;
+            border-color: #3498db;
+        }
+
+        .option.selected {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .option-letter {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: white;
+            color: #3498db;
+        }
+
+        .test-result {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            margin: 0 auto 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .score-total {
+            opacity: 0.8;
+        }
+
+        /* Summary Styles */
+        .summary-content {
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .summary-section {
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #f8f9fa, #ffffff);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .summary-section:hover {
+            transform: translateX(10px);
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-title i {
+            color: #3498db;
+        }
+
+        .summary-list {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+
+        .summary-list li {
+            margin: 12px 0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .summary-list li:before {
+            content: "✓";
+            color: #2ecc71;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #856404;
+            font-weight: 600;
+        }
+
+        .important-note {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .diagram-note {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+        }
+
+        /* Progress and Stats */
+        .progress-container {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .flashcard-container {
+                height: 350px;
+            }
+            
+            .mindmap {
+                grid-template-columns: 1fr;
+            }
+            
+            .flashcard-controls {
+                flex-wrap: wrap;
+            }
+            
+            .option {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-brain"></i> Endokrin Sistem Öğrenme Portalı</h1>
+            <div class="subtitle">4 farklı öğrenme yöntemi ile konuyu keşfedin</div>
+            <div class="progress-container" id="progress-container">
+                <div class="progress-info">
+                    <span><i class="fas fa-check-circle"></i> Tamamlanan: <span id="completed-count">0</span>/4</span>
+                    <span><i class="fas fa-chart-line"></i> İlerleme: <span id="progress-percent">0%</span></span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard -->
+        <div class="dashboard" id="dashboard">
+            <div class="card" id="flashcard-btn">
+                <i class="fas fa-layer-group"></i>
+                <div class="card-title">Bilgi Kartları</div>
+                <div class="card-description">50+ adet soru-cevap kartı ile hormonlar ve endokrin bezleri öğrenin.</div>
+            </div>
+            
+            <div class="card" id="mindmap-btn">
+                <i class="fas fa-project-diagram"></i>
+                <div class="card-title">Zihin Haritası</div>
+                <div class="card-description">Endokrin sistemin ana hatlarını görsel olarak öğrenin ve bağlantıları keşfedin.</div>
+            </div>
+            
+            <div class="card" id="test-btn">
+                <i class="fas fa-file-alt"></i>
+                <div class="card-title">Test Çöz</div>
+                <div class="card-description">40 soruluk detaylı test ile endokrin sistem bilgilerinizi sınayın.</div>
+            </div>
+            
+            <div class="card" id="summary-btn">
+                <i class="fas fa-book"></i>
+                <div class="card-title">Detaylı Özet</div>
+                <div class="card-description">Endokrin sistemin tüm detaylarını kapsamlı özet şeklinde tekrar edin.</div>
+            </div>
+        </div>
+
+        <!-- Flashcard Section -->
+        <div class="content-section" id="flashcard-section">
+            <button class="back-btn" id="back-from-flashcards">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-layer-group"></i> Endokrin Sistem Bilgi Kartları
+            </h2>
+            
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard">
+                    <div class="flashcard-front">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">❓</div>
+                        <div class="question" id="question" style="font-size: 1.5rem; font-weight: 600; line-height: 1.6;">
+                            Soru buraya gelecek
+                        </div>
+                        <div style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+                            <i class="fas fa-mouse-pointer"></i> Kartı çevirmek için tıklayın
+                        </div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">👍</div>
+                        <div class="answer" id="answer" style="font-size: 1.4rem; line-height: 1.6;">
+                            Cevap buraya gelecek
+                        </div>
+                        <div style="margin-top: 30px; opacity: 0.8; font-size: 0.9rem;">
+                            <i class="fas fa-redo"></i> Tekrar çevirmek için tıklayın
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flashcard-controls">
+                <button class="flashcard-btn" id="prev-btn">
+                    <i class="fas fa-arrow-left"></i> Önceki
+                </button>
+                <button class="flashcard-btn" id="flip-btn">
+                    <i class="fas fa-sync-alt"></i> Kartı Çevir
+                </button>
+                <button class="flashcard-btn" id="next-btn">
+                    Sonraki <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="flashcard-btn" id="shuffle-btn" style="background: #e74c3c;">
+                    <i class="fas fa-random"></i> Karıştır
+                </button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; color: #666; font-size: 1.1rem;">
+                <span id="current-card">1</span> / <span id="total-cards">50</span> Kart
+            </div>
+        </div>
+
+        <!-- Mind Map Section -->
+        <div class="content-section" id="mindmap-section">
+            <button class="back-btn" id="back-from-mindmap">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-project-diagram"></i> Endokrin Sistem Zihin Haritası
+            </h2>
+            
+            <div class="mindmap">
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Hipofiz Bezi (Ana Bez)</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Ön Hipofiz:</strong> STH, TSH, ACTH, FSH, LH, PRL, MSH</li>
+                        <li><strong>Arka Hipofiz:</strong> ADH, Oksitosin</li>
+                        <li><strong>STH (Büyüme Hormonu):</strong> Büyümeyi sağlar</li>
+                        <li><strong>TSH:</strong> Tiroit bezini uyarır</li>
+                        <li><strong>ACTH:</strong> Böbrek üstü bezini uyarır</li>
+                        <li><strong>FSH/LH:</strong> Eşeysel bezleri uyarır</li>
+                        <li><strong>ADH:</strong> Su dengesini sağlar</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Tiroit Bezi</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Tiroksin (T4):</strong> Metabolizma hızını artırır</li>
+                        <li><strong>Kalsitonin:</strong> Kandaki kalsiyumu düşürür</li>
+                        <li><strong>İyot eksikliği:</strong> Guatr hastalığı</li>
+                        <li><strong>Az salgılanması:</strong> Hipotiroidizm</li>
+                        <li><strong>Fazla salgılanması:</strong> Hipertiroidizm</li>
+                        <li><strong>Çocuklukta azlığı:</strong> Kretenizm</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Paratiroit Bezi</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Parathormon (PTH):</strong> Kandaki kalsiyumu artırır</li>
+                        <li><strong>Kalsitonin ile zıt çalışır</strong></li>
+                        <li><strong>Az salgılanması:</strong> Tetani hastalığı</li>
+                        <li><strong>Fazla salgılanması:</strong> Böbrek taşları</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Böbrek Üstü Bezi</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Kabuk Bölgesi (Korteks):</strong>
+                            <li>• Kortizol: Stres hormonu</li>
+                            <li>• Aldosteron: Mineral dengesi</li>
+                            <li>• Eşeysel hormonlar</li>
+                        </li>
+                        <li><strong>Öz Bölgesi (Medulla):</strong>
+                            <li>• Adrenalin: Acil durum hormonu</li>
+                            <li>• Nöradrenalin: Kan basıncı</li>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Pankreas</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Karma bez:</strong> Hem enzim hem hormon</li>
+                        <li><strong>İnsülin:</strong> Kan şekerini düşürür</li>
+                        <li><strong>Glukagon:</strong> Kan şekerini yükseltir</li>
+                        <li><strong>Langerhans Adacıkları:</strong> Hormon üretimi</li>
+                        <li><strong>Diyabet:</strong> İnsülin eksikliği/direnci</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Eşeysel Bezler</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Erkek:</strong> Testis → Testosteron</li>
+                        <li><strong>Kadın:</strong> Yumurtalık → Östrojen, Progesteron</li>
+                        <li><strong>Testosteron:</strong> Erkeklik özellikleri, sperm</li>
+                        <li><strong>Östrojen:</strong> Kadınlık özellikleri</li>
+                        <li><strong>Progesteron:</strong> Gebelik, rahim hazırlığı</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Epifiz ve Timüs</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Epifiz Bezi:</strong> Melatonin hormonu</li>
+                        <li><strong>Melatonin:</strong> Biyoritm, uyku düzeni</li>
+                        <li><strong>Timüs Bezi:</strong> T-lenfosit olgunlaşması</li>
+                        <li><strong>Timik hormon:</strong> Bağışıklık sistemi</li>
+                    </ul>
+                </div>
+                
+                <div class="mindmap-node">
+                    <div class="mindmap-title">Hormonal Düzenleme</div>
+                    <ul class="mindmap-content">
+                        <li><strong>Homeostasi:</strong> İç denge</li>
+                        <li><strong>Geri Bildirim:</strong> Pozitif/Negatif</li>
+                        <li><strong>Hipotalamus:</strong> Ana kontrol merkezi</li>
+                        <li><strong>Antagonist hormonlar:</strong> Zıt çalışanlar</li>
+                        <li><strong>Hedef hücre:</strong> Hormonun etki ettiği hücre</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Section -->
+        <div class="content-section" id="test-section">
+            <button class="back-btn" id="back-from-test">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-file-alt"></i> Endokrin Sistem Testi (40 Soru)
+            </h2>
+            
+            <div class="test-container" id="test-container">
+                <!-- Test questions will be loaded here -->
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="flashcard-btn" id="submit-test" style="background: #2ecc71; padding: 15px 40px; font-size: 1.1rem;">
+                    <i class="fas fa-paper-plane"></i> Testi Bitir ve Sonuçları Gör
+                </button>
+                <button class="flashcard-btn" id="clear-selections" style="background: #f39c12; margin-left: 10px;">
+                    <i class="fas fa-eraser"></i> Seçimleri Temizle
+                </button>
+            </div>
+            
+            <div class="test-result" id="test-result">
+                <div class="score-circle">
+                    <div class="score-number" id="score">0</div>
+                    <div class="score-total">/ 40</div>
+                </div>
+                <h3 style="margin-bottom: 15px; font-size: 1.8rem;">Test Sonuçlarınız</h3>
+                <div id="test-message" style="font-size: 1.2rem; margin-bottom: 20px;"></div>
+                <div id="detailed-result" style="margin-bottom: 20px;"></div>
+                <button class="back-btn" id="restart-test" style="margin-top: 15px; background: white; color: #3498db; padding: 12px 25px;">
+                    <i class="fas fa-redo"></i> Testi Yeniden Başlat
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="content-section" id="summary-section">
+            <button class="back-btn" id="back-from-summary">
+                <i class="fas fa-arrow-left"></i> Ana Menüye Dön
+            </button>
+            <h2 style="color: #2c3e50; text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-book"></i> Endokrin Sistem Detaylı Özet
+            </h2>
+            
+            <div class="summary-content">
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-info-circle"></i> ENDOKRİN SİSTEM TEMEL KAVRAMLARI</div>
+                    <ul class="summary-list">
+                        <li><strong>Endokrin Sistem:</strong> İç salgı bezlerinden oluşan, hormonlarla vücudu düzenleyen sistem.</li>
+                        <li><strong>Hormon:</strong> Endokrin bezler tarafından üretilen, kan yoluyla taşınan kimyasal düzenleyiciler.</li>
+                        <li><strong>Endokrin Bezler:</strong> Salgılarını doğrudan kana veren kanalsız bezler.</li>
+                        <li><strong>Ekzokrin Bezler:</strong> Salgılarını kanallarla belirli bölgelere ileten bezler (ter, tükürük bezleri).</li>
+                        <li><strong>Karma Bezler:</strong> Hem endokrin hem ekzokrin özellik gösteren bezler (pankreas, testis, yumurtalık).</li>
+                        <li><strong>Homeostasi:</strong> Vücudun iç dengede kalması, endokrin sistemin temel görevi.</li>
+                    </ul>
+                    <div class="important-note">
+                        <strong>📌 Önemli Not:</strong> Hormonlar çok az miktarda salgılanır ama etkileri çok büyüktür. Bazı hormonlar tüm vücut hücrelerini etkilerken (STH), bazıları sadece belirli hedef organları etkiler (TSH).
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-gland"></i> HİPOFİZ BEZİ (ANA BEZ)</div>
+                    <ul class="summary-list">
+                        <li><strong>Konum:</strong> Beynin tabanında, hipotalamusun altında.</li>
+                        <li><strong>Yapı:</strong> Ön lob (adenohipofiz) ve arka lob (nörohipofiz).</li>
+                        <li><strong>Kontrol:</strong> Hipotalamus tarafından kontrol edilir.</li>
+                        <li><strong>Ön Hipofiz Hormonları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">STH (Büyüme Hormonu):</span> Tüm vücut hücrelerini etkiler, büyümeyi sağlar</li>
+                                <li><span class="highlight">TSH (Tiroit Uyarıcı Hormon):</span> Tiroit bezini uyarır</li>
+                                <li><span class="highlight">ACTH (Adrenokortikotropik Hormon):</span> Böbrek üstü bezini uyarır</li>
+                                <li><span class="highlight">FSH (Folikül Uyarıcı Hormon):</span> Yumurta ve sperm oluşumu</li>
+                                <li><span class="highlight">LH (Luteinleştirici Hormon):</span> Ovulasyon, testosteron salgısı</li>
+                                <li><span class="highlight">PRL (Prolaktin):</span> Süt üretimi, analık içgüdüsü</li>
+                                <li><span class="highlight">MSH (Melanosit Uyarıcı Hormon):</span> Deri rengini düzenler</li>
+                            </ul>
+                        </li>
+                        <li><strong>Arka Hipofiz Hormonları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">ADH (Antidiüretik Hormon):</span> Böbreklerden suyun geri emilimi</li>
+                                <li><span class="highlight">Oksitosin:</span> Doğum kasılmaları, süt salgısı</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hastalıklar:</strong> STH fazlalığı → Devlik (gigantizm) / STH eksikliği → Cücelik (nanizm) / Yetişkinlerde STH fazlalığı → Akromegali.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-neuter"></i> TİROİT BEZİ</div>
+                    <ul class="summary-list">
+                        <li><strong>Konum:</strong> Gırtlağın altında, soluk borusunun önünde, iki loblu.</li>
+                        <li><strong>Hormonlar:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Tiroksin (T4):</span> İyot içerir, metabolizma hızını artırır</li>
+                                <li><span class="highlight">Kalsitonin:</span> Kandaki kalsiyumu düşürür, kemiklere kalsiyum depolanmasını sağlar</li>
+                            </ul>
+                        </li>
+                        <li><strong>İyot Eksikliği:</strong> Basit guatr (tiroit bezinin büyümesi).</li>
+                        <li><strong>Tiroksin Azlığı (Hipotiroidizm):</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Çocuklarda: Kretenizm (zekâ geriliği, büyüme yetersizliği)</li>
+                                <li>Yetişkinlerde: Metabolizma yavaşlar, kilo artışı, uyuşukluk, saç dökülmesi</li>
+                            </ul>
+                        </li>
+                        <li><strong>Tiroksin Fazlalığı (Hipertiroidizm/Toksik Guatr):</strong> Metabolizma hızlanır, kilo kaybı, sinirlilik, terleme, yüksek tansiyon.</li>
+                        <li><strong>Kontrol:</strong> Hipofizden salgılanan TSH ile kontrol edilir.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-bone"></i> PARATİROİT BEZİ</div>
+                    <ul class="summary-list">
+                        <li><strong>Konum:</strong> Tiroit bezinin arkasında, 4 küçük bez.</li>
+                        <li><strong>Hormon:</strong> Parathormon (PTH).</li>
+                        <li><strong>Görev:</strong> Kandaki kalsiyum seviyesini artırmak.</li>
+                        <li><strong>Mekanizma:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>Kemiklerden kana kalsiyum geçişini sağlar</li>
+                                <li>İnce bağırsak ve böbreklerden kalsiyum emilimini artırır</li>
+                            </ul>
+                        </li>
+                        <li><strong>Kalsitonin ile İlişki:</strong> Kalsitonin (kalsiyumu düşürür) ve PTH (kalsiyumu artırır) antagonist hormonlardır.</li>
+                        <li><strong>Hastalıklar:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>PTH azlığı → Tetani (kas krampları)</li>
+                                <li>PTH fazlalığı → Böbrek taşları</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-kidney"></i> BÖBREK ÜSTÜ BEZİ (ADRENAL BEZ)</div>
+                    <ul class="summary-list">
+                        <li><strong>Konum:</strong> Her iki böbreğin üstünde.</li>
+                        <li><strong>Yapı:</strong> Kabuk (korteks) ve öz (medulla) bölgeleri.</li>
+                        <li><strong>Kabuk Bölgesi Hormonları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Kortizol:</span> Stres hormonu, protein/yağ/karbonhidrat metabolizmasını düzenler, bağışıklığı baskılar</li>
+                                <li><span class="highlight">Aldosteron:</span> Mineral dengesi (Na⁺, K⁺, Cl⁻), kan basıncını düzenler</li>
+                                <li><span class="highlight">Eşeysel Hormonlar:</span> Az miktarda östrojen, progesteron, testosteron</li>
+                            </ul>
+                        </li>
+                        <li><strong>Öz Bölgesi Hormonları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Adrenalin (Epinefrin):</span> Acil durum hormonu, korku/öfke anında salgılanır, kalp atışını hızlandırır</li>
+                                <li><span class="highlight">Nöradrenalin (Norepinefrin):</span> Kan basıncını artırır, nörotransmitter olarak da görev yapar</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hastalıklar:</strong> Aldosteron azlığı → Addison hastalığı (bronz deri, halsizlik).</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-pancreas"></i> PANKREAS</div>
+                    <ul class="summary-list">
+                        <li><strong>Konum:</strong> Midenin arkasında.</li>
+                        <li><strong>Özellik:</strong> Karma bez (hem sindirim enzimi hem hormon).</li>
+                        <li><strong>Langerhans Adacıkları:</strong> Hormon üreten özel hücre grupları.</li>
+                        <li><strong>Hormonlar:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">İnsülin (Beta hücreleri):</span> Kan şekerini düşürür, glikozun hücreye girmesini sağlar, glikojen depolanmasını uyarır</li>
+                                <li><span class="highlight">Glukagon (Alfa hücreleri):</span> Kan şekerini yükseltir, karaciğerdeki glikojeni glikoza çevirir</li>
+                            </ul>
+                        </li>
+                        <li><strong>Antagonist Hormonlar:</strong> İnsülin ve glukagon birbirine zıt çalışır.</li>
+                        <li><strong>Diyabet (Şeker Hastalığı):</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Tip I Diyabet:</span> İnsülin üretiminin olmaması, gençlerde görülür, insülin enjeksiyonu gerekir</li>
+                                <li><span class="highlight">Tip II Diyabet:</span> İnsülin direnci, ileri yaşlarda görülür, diyet ve ilaçla kontrol edilir</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="diagram-note">
+                        <strong>🔍 Kan Şekeri Düzenlemesi:</strong> Yemek sonrası yükselen kan şekeri → İnsülin salgılanır → Glikoz hücreye girer → Kan şekeri düşer. Açlıkta düşen kan şekeri → Glukagon salgılanır → Glikojen glikoza dönüşür → Kan şekeri yükselir.
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-venus-mars"></i> EŞEYSEL BEZLER</div>
+                    <ul class="summary-list">
+                        <li><strong>Erkek Eşeysel Bezi:</strong> Testisler.</li>
+                        <li><strong>Erkek Hormonu:</strong> Testosteron.</li>
+                        <li><strong>Testosteron Görevleri:</strong> Sperm üretimi, erkeklik özellikleri (sakal, ses kalınlaşması), kas gelişimi.</li>
+                        <li><strong>Kadın Eşeysel Bezi:</strong> Yumurtalıklar (ovaryum).</li>
+                        <li><strong>Kadın Hormonları:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Östrojen:</span> Kadınlık özellikleri (göğüs gelişimi, kalça genişlemesi), adet döngüsü</li>
+                                <li><span class="highlight">Progesteron:</span> Rahim duvarının kalınlaşması, gebeliğin devamı</li>
+                            </ul>
+                        </li>
+                        <li><strong>Kontrol:</strong> Hipofizden salgılanan FSH ve LH tarafından kontrol edilir.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-moon"></i> EPİFİZ VE TİMÜS BEZLERİ</div>
+                    <ul class="summary-list">
+                        <li><strong>Epifiz Bezi (Pineal Bez):</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Konum:</span> Beyin yarım küreleri arasında</li>
+                                <li><span class="highlight">Hormon:</span> Melatonin</li>
+                                <li><span class="highlight">Görev:</span> Biyoritm düzenleme, uyku-uyanıklık döngüsü</li>
+                                <li><span class="highlight">Saldırım:</span> Karanlıkta artar, ışıkta azalır</li>
+                            </ul>
+                        </li>
+                        <li><strong>Timüs Bezi:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Konum:</span> Göğüs boşluğunda</li>
+                                <li><span class="highlight">Özellik:</span> Çocuklukta büyük, yaşla küçülür</li>
+                                <li><span class="highlight">Görev:</span> T-lenfositlerin olgunlaşması, bağışıklık sistemi</li>
+                                <li><span class="highlight">Hormon:</span> Timik hormon</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-exchange-alt"></i> HORMONAL DÜZENLEME MEKANİZMALARI</div>
+                    <ul class="summary-list">
+                        <li><strong>Hipotalamus-Hipofiz Ekseni:</strong> Hormonal sistemin ana kontrol merkezi.</li>
+                        <li><strong>Geri Bildirim Mekanizması:</strong>
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li><span class="highlight">Negatif Geri Bildirim:</span> Hormon seviyesi yükselince üretimi durdurur (tiroksin-TSH)</li>
+                                <li><span class="highlight">Pozitif Geri Bildirim:</span> Hormon seviyesi yükselince üretimi artırır (doğum sırasında oksitosin)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Antagonist Hormonlar:</strong> Birbirine zıt çalışan hormon çiftleri:
+                            <ul style="margin-left: 20px; list-style-type: circle;">
+                                <li>İnsülin ↔ Glukagon</li>
+                                <li>Kalsitonin ↔ Parathormon</li>
+                                <li>Aldosteron ↔ Atriyal natriüretik peptid</li>
+                            </ul>
+                        </li>
+                        <li><strong>Hedef Hücre:</strong> Hormonun etki ettiği özel hücreler, hormonu tanıyan reseptörlere sahiptir.</li>
+                        <li><strong>Homeostasi:</strong> Tüm hormonal sistemin amacı vücudun iç dengesini (kan şekeri, sıcaklık, kalsiyum, su dengesi) korumaktır.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-clipboard-list"></i> ENDOKRİN SİSTEM HASTALIKLARI</div>
+                    <ul class="summary-list">
+                        <li><strong>Guatr:</strong> Tiroit bezinin büyümesi (iyot eksikliği).</li>
+                        <li><strong>Kretenizm:</strong> Çocuklukta tiroksin eksikliği → Zekâ geriliği, büyüme bozukluğu.</li>
+                        <li><strong>Hipotiroidizm:</strong> Yetişkinlerde tiroksin eksikliği → Kilo artışı, uyuşukluk, soğuğa dayanıksızlık.</li>
+                        <li><strong>Hipertiroidizm (Toksik Guatr):</strong> Tiroksin fazlalığı → Kilo kaybı, sinirlilik, çarpıntı.</li>
+                        <li><strong>Diyabet:</strong> İnsülin eksikliği/direnci → Kan şekeri yüksekliği.</li>
+                        <li><strong>Devlik (Gigantizm):</strong> Çocuklukta STH fazlalığı.</li>
+                        <li><strong>Cücelik (Nanizm):</strong> Çocuklukta STH eksikliği.</li>
+                        <li><strong>Akromegali:</strong> Yetişkinlerde STH fazlalığı → El, ayak, yüz kemiklerinde büyüme.</li>
+                        <li><strong>Addison Hastalığı:</strong> Aldosteron eksikliği → Bronz deri, halsizlik, tansiyon düşüklüğü.</li>
+                        <li><strong>Tetani:</strong> Parathormon eksikliği → Kas krampları.</li>
+                        <li><strong>Cushing Sendromu:</strong> Kortizol fazlalığı → Aydede yüzü, kilo artışı.</li>
+                    </ul>
+                </div>
+                
+                <div class="summary-section">
+                    <div class="summary-title"><i class="fas fa-heartbeat"></i> ENDOKRİN SİSTEM SAĞLIĞI</div>
+                    <ul class="summary-list">
+                        <li><strong>İyotlu Tuz Kullanımı:</strong> Guatrı önlemek için.</li>
+                        <li><strong>Dengeli Beslenme:</strong> Hormon üretimi için gerekli besin ögeleri.</li>
+                        <li><strong>Düzenli Uyku:</strong> Melatonin dengesi için.</li>
+                        <li><strong>Stres Yönetimi:</strong> Kortizol seviyesini kontrol etmek.</li>
+                        <li><strong>Düzenli Kontrol:</strong> Özellikle diyabet ve tiroit hastalıkları için.</li>
+                        <li><strong>Fiziksel Aktivite:</strong> İnsülin duyarlılığını artırır.</li>
+                        <li><strong>Sigara ve Alkolden Kaçınma:</strong> Hormonal dengeyi bozabilir.</li>
+                    </ul>
+                    <div class="important-note">
+                        <strong>🎯 Önemli Hatırlatma:</strong> Endokrin sistem, sinir sistemi ile birlikte vücudun düzenleyici sistemlerini oluşturur. Sinir sistemi hızlı ve kısa süreli, endokrin sistem yavaş ve uzun süreli düzenlemeler yapar.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard Navigation
+        document.getElementById('flashcard-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('flashcard-section').classList.add('active');
+            updateProgress('flashcard');
+        });
+
+        document.getElementById('mindmap-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('mindmap-section').classList.add('active');
+            updateProgress('mindmap');
+        });
+
+        document.getElementById('test-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('test-section').classList.add('active');
+            loadTestQuestions();
+            updateProgress('test');
+        });
+
+        document.getElementById('summary-btn').addEventListener('click', () => {
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('summary-section').classList.add('active');
+            updateProgress('summary');
+        });
+
+        // Back buttons
+        document.getElementById('back-from-flashcards').addEventListener('click', () => {
+            document.getElementById('flashcard-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+        });
+
+        document.getElementById('back-from-mindmap').addEventListener('click', () => {
+            document.getElementById('mindmap-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+        });
+
+        document.getElementById('back-from-test').addEventListener('click', () => {
+            document.getElementById('test-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+            document.getElementById('test-result').style.display = 'none';
+        });
+
+        document.getElementById('back-from-summary').addEventListener('click', () => {
+            document.getElementById('summary-section').classList.remove('active');
+            document.getElementById('dashboard').style.display = 'grid';
+        });
+
+        // Progress Tracking
+        const completedSections = new Set();
+        
+        function updateProgress(section) {
+            if (!completedSections.has(section)) {
+                completedSections.add(section);
+                const count = completedSections.size;
+                const percent = Math.round((count / 4) * 100);
+                
+                document.getElementById('completed-count').textContent = count;
+                document.getElementById('progress-percent').textContent = percent + '%';
+                document.getElementById('progress-fill').style.width = percent + '%';
+            }
+        }
+
+        // FLASHCARD SYSTEM - 50+ Endokrin Sistem Sorusu
+        const csvData = `Endokrin sistem nedir?,"İç salgı bezlerinden oluşan, hormonlarla vücudu düzenleyen sistemdir."
+Hormon nedir?,"Endokrin bezler tarafından üretilen, kan yoluyla taşınan kimyasal düzenleyicilerdir."
+Endokrin bezlerin özelliği nedir?,"Salgılarını doğrudan kana veren kanalsız bezlerdir."
+Ekzokrin bez nedir?,"Salgılarını kanallarla belirli bölgelere ileten bezlerdir (ter, tükürük bezleri)."
+Karma bez nedir?,"Hem endokrin hem ekzokrin özellik gösteren bezlerdir (pankreas, testis, yumurtalık)."
+Homeostasi nedir?,"Vücudun iç dengede kalması, endokrin sistemin temel görevidir."
+Hipofiz bezi nerede bulunur?,"Beynin tabanında, hipotalamusun altında."
+Hipofiz bezi kaç lobdan oluşur?,"İki lobdan: Ön hipofiz (adenohipofiz) ve arka hipofiz (nörohipofiz)."
+Hipofiz bezi hangi bez tarafından kontrol edilir?,"Hipotalamus tarafından kontrol edilir."
+STH (Büyüme Hormonu) nedir?,"Tüm vücut hücrelerini etkileyen, büyümeyi sağlayan hormondur."
+STH fazla salgılanırsa ne olur?,"Çocuklarda devlik (gigantizm), yetişkinlerde akromegali."
+STH az salgılanırsa ne olur?,"Çocuklarda cücelik (nanizm)."
+TSH hormonunun görevi nedir?,"Tiroit bezini uyararak tiroksin salgılanmasını sağlar."
+ACTH hormonunun görevi nedir?,"Böbrek üstü bezini uyararak kortizol salgılanmasını sağlar."
+FSH hormonunun görevi nedir?,"Dişilerde yumurta, erkeklerde sperm oluşumunu sağlar."
+LH hormonunun görevi nedir?,"Dişilerde ovulasyonu, erkeklerde testosteron salgısını sağlar."
+PRL (Prolaktin) hormonunun görevi nedir?,"Süt üretimini ve analık içgüdüsünü sağlar."
+MSH hormonunun görevi nedir?,"Deri rengini oluşturan melanin salgılanmasını uyarır."
+ADH (Antidiüretik Hormon) nedir?,"Böbreklerden suyun geri emilimini sağlayan hormondur."
+Oksitosin hormonunun görevi nedir?,"Doğum sırasında rahim kasılmalarını ve süt salgılanmasını sağlar."
+Tiroit bezi nerede bulunur?,"Gırtlağın altında, soluk borusunun önünde, iki loblu bir bezdir."
+Tiroit bezi hangi hormonları salgılar?,"Tiroksin (T4) ve kalsitonin hormonlarını salgılar."
+Tiroksin hormonunun görevi nedir?,"Metabolizma hızını artırır, iyot içerir."
+Kalsitonin hormonunun görevi nedir?,"Kandaki kalsiyum seviyesini düşürür."
+İyot eksikliğinde ne olur?,"Basit guatr (tiroit bezinin büyümesi) oluşur."
+Kretenizm nedir?,"Çocukluk döneminde tiroksin eksikliğine bağlı zekâ geriliği ve büyüme yetersizliği."
+Hipotiroidizm nedir?,"Yetişkinlerde tiroksin eksikliği, metabolizma yavaşlar, kilo artışı olur."
+Hipertiroidizm (Toksik Guatr) nedir?,"Tiroksin fazlalığı, metabolizma hızlanır, kilo kaybı olur."
+Paratiroit bezi nerede bulunur?,"Tiroit bezinin arkasında, dört küçük bezden oluşur."
+Paratiroit bezi hangi hormonu salgılar?,"Parathormon (PTH) salgılar."
+Parathormonun görevi nedir?,"Kandaki kalsiyum seviyesini artırır."
+Parathormon az salgılanırsa ne olur?,"Tetani hastalığı (ağrılı kas krampları) oluşur."
+Parathormon fazla salgılanırsa ne olur?,"Böbrek taşları oluşabilir."
+Kalsitonin ve parathormon nasıl çalışır?,"Antagonist (zıt) hormonlardır: Kalsitonin kalsiyumu düşürür, PTH artırır."
+Böbrek üstü bezi nerede bulunur?,"Her iki böbreğin üstünde bulunur."
+Böbrek üstü bezi kaç bölgeden oluşur?,"İki bölgeden: Kabuk (korteks) ve öz (medulla) bölgeleri."
+Kortizol hormonunun görevi nedir?,"Stres hormonu, protein/yağ/karbonhidrat metabolizmasını düzenler."
+Aldosteron hormonunun görevi nedir?,"Mineral dengesini (Na⁺, K⁺, Cl⁻) ve kan basıncını düzenler."
+Adrenalin (Epinefrin) nedir?,"Acil durum hormonu, korku/öfke anında salgılanır, kalp atışını hızlandırır."
+Nöradrenalin (Norepinefrin) nedir?,"Kan basıncını artırır, nörotransmitter olarak da görev yapar."
+Addison hastalığı nedir?,"Aldosteron eksikliğine bağlı bronz deri, halsizlik, tansiyon düşüklüğü."
+Pankreas nerede bulunur?,"Midenin arkasında bulunur."
+Pankreas nasıl bir bezdir?,"Karma bezdir (hem sindirim enzimi hem hormon salgılar)."
+Langerhans Adacıkları nedir?,"Pankreasta hormon üreten özel hücre gruplarıdır."
+İnsülin hangi hücrelerden salgılanır?,"Beta hücrelerinden salgılanır."
+İnsülinin görevi nedir?,"Kan şekerini düşürür, glikozun hücreye girmesini sağlar."
+Glukagon hangi hücrelerden salgılanır?,"Alfa hücrelerinden salgılanır."
+Glukagonun görevi nedir?,"Kan şekerini yükseltir, karaciğerdeki glikojeni glikoza çevirir."
+Tip I Diyabet nedir?,"İnsülin üretiminin olmaması, gençlerde görülür, insülin enjeksiyonu gerekir."
+Tip II Diyabet nedir?,"İnsülin direnci, ileri yaşlarda görülür, diyet ve ilaçla kontrol edilir."
+Testosteron hangi bezden salgılanır?,"Testislerden salgılanır."
+Testosteronun görevi nedir?,"Sperm üretimi, erkeklik özellikleri, kas gelişimi."
+Östrojen hangi bezden salgılanır?,"Yumurtalıklardan salgılanır."
+Östrojenin görevi nedir?,"Kadınlık özellikleri, adet döngüsü."
+Progesteronun görevi nedir?,"Rahim duvarının kalınlaşması, gebeliğin devamı."
+Epifiz bezi nerede bulunur?,"Beyin yarım küreleri arasında bulunur."
+Epifiz bezi hangi hormonu salgılar?,"Melatonin hormonunu salgılar."
+Melatoninin görevi nedir?,"Biyoritm düzenleme, uyku-uyanıklık döngüsü."
+Timüs bezi nerede bulunur?,"Göğüs boşluğunda bulunur."
+Timüs bezinin görevi nedir?,"T-lenfositlerin olgunlaşması, bağışıklık sistemi."
+Timüs bezi yaşla nasıl değişir?,"Çocuklukta büyük, yaşla birlikte küçülür."
+Negatif geri bildirim nedir?,"Hormon seviyesi yükselince üretimin durması (tiroksin-TSH)."
+Pozitif geri bildirim nedir?,"Hormon seviyesi yükselince üretimin artması (doğumda oksitosin)."
+Antagonist hormon nedir?,"Birbirine zıt çalışan hormon çiftleridir (insülin-glukagon)."
+Hedef hücre nedir?,"Hormonun etki ettiği, hormonu tanıyan reseptörlere sahip özel hücreler."
+Endokrin sistem hastalıklarının teşhisi nasıl yapılır?,"Kan testleri ile hormon seviyeleri ölçülerek."
+Endokrin sistem sağlığı için ne yapılmalı?,"İyotlu tuz kullanımı, dengeli beslenme, düzenli uyku, stres yönetimi."`;
+
+        // Process CSV data
+        const lines = csvData.split('\n');
+        const flashcards = lines.map(line => {
+            let parts = [];
+            let inQuotes = false;
+            let currentPart = '';
+            
+            for (let i = 0; i < line.length; i++) {
+                if (line[i] === '"') {
+                    inQuotes = !inQuotes;
+                } else if (line[i] === ',' && !inQuotes) {
+                    parts.push(currentPart);
+                    currentPart = '';
+                } else {
+                    currentPart += line[i];
+                }
+            }
+            parts.push(currentPart);
+            
+            const question = parts[0].replace(/^"|"$/g, '').trim();
+            const answer = parts[1].replace(/^"|"$/g, '').trim();
+            
+            return { question, answer };
+        });
+
+        // Flashcard variables
+        let currentCardIndex = 0;
+        const totalCards = flashcards.length;
+
+        // DOM elements for flashcards
+        const flashcardElement = document.getElementById('flashcard');
+        const questionElement = document.getElementById('question');
+        const answerElement = document.getElementById('answer');
+        const currentCardElement = document.getElementById('current-card');
+        const totalCardsElement = document.getElementById('total-cards');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const flipButton = document.getElementById('flip-btn');
+        const shuffleButton = document.getElementById('shuffle-btn');
+
+        // Initialize flashcards
+        totalCardsElement.textContent = totalCards;
+        loadCard();
+
+        function loadCard() {
+            const currentCard = flashcards[currentCardIndex];
+            questionElement.textContent = currentCard.question;
+            answerElement.textContent = currentCard.answer;
+            currentCardElement.textContent = currentCardIndex + 1;
+            flashcardElement.classList.remove('flipped');
+        }
+
+        // Flashcard event listeners
+        prevButton.addEventListener('click', () => {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                loadCard();
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentCardIndex < totalCards - 1) {
+                currentCardIndex++;
+                loadCard();
+            }
+        });
+
+        flipButton.addEventListener('click', () => {
+            flashcardElement.classList.toggle('flipped');
+        });
+
+        flashcardElement.addEventListener('click', () => {
+            flashcardElement.classList.toggle('flipped');
+        });
+
+        shuffleButton.addEventListener('click', () => {
+            for (let i = flashcards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+            }
+            currentCardIndex = 0;
+            loadCard();
+        });
+
+        // TEST SYSTEM - 40 Questions
+        const testQuestions = [
+            {
+                question: "Endokrin sistem nedir?",
+                options: [
+                    "Sinir hücrelerinden oluşan sistem",
+                    "İç salgı bezlerinden oluşan, hormonlarla vücudu düzenleyen sistem",
+                    "Sindirim enzimleri üreten sistem",
+                    "Kan dolaşımını sağlayan sistem",
+                    "Solunum sisteminin bir parçası"
+                ],
+                correct: 1,
+                explanation: "Endokrin sistem, iç salgı bezlerinden oluşan ve hormonlarla vücudun düzenlenmesini sağlayan sistemdir."
+            },
+            {
+                question: "Hormonların temel özelliği nedir?",
+                options: [
+                    "Sadece sindirimde görev alırlar",
+                    "Kan yoluyla taşınır ve kimyasal düzenleyicidirler",
+                    "Sadece sinir sistemi tarafından üretilirler",
+                    "Sadece kaslar üzerinde etkilidirler",
+                    "Vücut ısısını düzenlerler"
+                ],
+                correct: 1,
+                explanation: "Hormonlar, endokrin bezler tarafından üretilen, kan yoluyla taşınan ve vücudu düzenleyen kimyasal maddelerdir."
+            },
+            {
+                question: "Aşağıdakilerden hangisi endokrin bez değildir?",
+                options: ["Hipofiz", "Tiroit", "Tükürük bezi", "Böbrek üstü bezi", "Pankreas"],
+                correct: 2,
+                explanation: "Tükürük bezi ekzokrin bir bezdir. Salgısını kanalla ağız boşluğuna verir. Endokrin bezler salgılarını doğrudan kana verir."
+            },
+            {
+                question: "Hipofiz bezi nerede bulunur?",
+                options: [
+                    "Böbreklerin üstünde",
+                    "Gırtlağın altında",
+                    "Beynin tabanında, hipotalamusun altında",
+                    "Midenin arkasında",
+                    "Göğüs boşluğunda"
+                ],
+                correct: 2,
+                explanation: "Hipofiz bezi, beyin tabanında, hipotalamusun altında bulunur ve 'ana bez' olarak adlandırılır."
+            },
+            {
+                question: "STH (Büyüme Hormonu) ile ilgili aşağıdakilerden hangisi yanlıştır?",
+                options: [
+                    "Tüm vücut hücrelerini etkiler",
+                    "Büyümeyi sağlar",
+                    "Çocuklukta fazla salgılanırsa devliğe neden olur",
+                    "Yetişkinlerde fazla salgılanırsa akromegaliye neden olur",
+                    "Kan şekerini düzenler"
+                ],
+                correct: 4,
+                explanation: "STH büyümeyi sağlar ama kan şekerini düzenlemez. Çocuklukta fazlalığı devlik, yetişkinlerde fazlalığı akromegali yapar."
+            },
+            {
+                question: "TSH hormonunun görevi nedir?",
+                options: [
+                    "Böbrek üstü bezini uyarmak",
+                    "Tiroit bezini uyararak tiroksin salgılatmak",
+                    "Süt üretimini sağlamak",
+                    "Yumurta ve sperm oluşumunu sağlamak",
+                    "Su dengesini ayarlamak"
+                ],
+                correct: 1,
+                explanation: "TSH (Tiroit Uyarıcı Hormon), hipofizden salgılanır ve tiroit bezini uyararak tiroksin hormonunun salgılanmasını sağlar."
+            },
+            {
+                question: "ADH (Antidiüretik Hormon) hangi bezden salgılanır ve görevi nedir?",
+                options: [
+                    "Ön hipofiz - Büyümeyi sağlar",
+                    "Arka hipofiz - Böbreklerden suyun geri emilimini sağlar",
+                    "Tiroit - Metabolizmayı hızlandırır",
+                    "Böbrek üstü - Stresle başa çıkmayı sağlar",
+                    "Pankreas - Kan şekerini düzenler"
+                ],
+                correct: 1,
+                explanation: "ADH, hipofizin arka lobundan salgılanır ve böbreklerden suyun geri emilimini sağlayarak vücudun su dengesini düzenler."
+            },
+            {
+                question: "Tiroit bezi ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: [
+                    "Sadece tiroksin hormonu salgılar",
+                    "İyot eksikliğinde küçülür",
+                    "Tiroksin hormonu metabolizmayı yavaşlatır",
+                    "Kalsitonin hormonu kandaki kalsiyumu düşürür",
+                    "Hipofizden bağımsız çalışır"
+                ],
+                correct: 3,
+                explanation: "Tiroit bezi tiroksin ve kalsitonin salgılar. Kalsitonin kandaki kalsiyum seviyesini düşürür. İyot eksikliğinde guatr olur (büyür)."
+            },
+            {
+                question: "Çocukluk döneminde tiroksin hormonunun az salgılanması sonucu ortaya çıkan hastalık nedir?",
+                options: ["Devlik", "Akromegali", "Kretenizm", "Guatr", "Diyabet"],
+                correct: 2,
+                explanation: "Çocuklukta tiroksin eksikliği kretenizme neden olur: zekâ geriliği ve büyüme yetersizliği görülür."
+            },
+            {
+                question: "Paratiroit bezi ile ilgili aşağıdakilerden hangisi yanlıştır?",
+                options: [
+                    "Tiroit bezinin arkasında bulunur",
+                    "4 küçük bezden oluşur",
+                    "Parathormon salgılar",
+                    "Kandaki kalsiyumu düşürür",
+                    "Az salgılanırsa tetani hastalığı görülür"
+                ],
+                correct: 3,
+                explanation: "Paratiroit bezi parathormon salgılar ve bu hormon kandaki kalsiyumu artırır. Az salgılanırsa tetani (kas krampları) görülür."
+            },
+            {
+                question: "Kalsitonin ve parathormon arasındaki ilişki nasıldır?",
+                options: [
+                    "Aynı görevi yaparlar",
+                    "Birbirlerini desteklerler",
+                    "Antagonist (zıt) hormonlardır",
+                    "Aynı bezden salgılanırlar",
+                    "İkisi de kalsiyumu artırır"
+                ],
+                correct: 2,
+                explanation: "Kalsitonin (tiroit) kalsiyumu düşürür, parathormon (paratiroit) kalsiyumu artırır. Bu nedenle antagonist (zıt çalışan) hormonlardır."
+            },
+            {
+                question: "Böbrek üstü bezinin kabuk bölgesinden salgılanmayan hormon hangisidir?",
+                options: ["Kortizol", "Aldosteron", "Adrenalin", "Östrojen", "Progesteron"],
+                correct: 2,
+                explanation: "Adrenalin böbrek üstü bezinin öz bölgesinden salgılanır. Kortizol, aldosteron ve eşeysel hormonlar kabuk bölgesinden salgılanır."
+            },
+            {
+                question: "Kortizol hormonu ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: [
+                    "Kan şekerini düşürür",
+                    "Bağışıklık sistemini güçlendirir",
+                    "Stres hormonu olarak bilinir",
+                    "Mineral dengesini sağlar",
+                    "Sadece acil durumlarda salgılanır"
+                ],
+                correct: 2,
+                explanation: "Kortizol stres hormonu olarak bilinir. Protein/yağ/karbonhidrat metabolizmasını düzenler, kan şekerini yükseltir, bağışıklığı baskılar."
+            },
+            {
+                question: "Addison hastalığı hangi hormonun eksikliğinde görülür?",
+                options: ["Kortizol", "Aldosteron", "Adrenalin", "Tiroksin", "İnsülin"],
+                correct: 1,
+                explanation: "Addison hastalığı, böbrek üstü bezinin kabuk bölgesinin yetersiz çalışması sonucu aldosteron ve kortizol eksikliğinde görülür."
+            },
+            {
+                question: "Adrenalin hormonu ile ilgili aşağıdakilerden hangisi yanlıştır?",
+                options: [
+                    "Acil durumlarda salgılanır",
+                    "Kan basıncını yükseltir",
+                    "Kalp atışını hızlandırır",
+                    "Kan şekerini düşürür",
+                    "Sindirimi yavaşlatır"
+                ],
+                correct: 3,
+                explanation: "Adrenalin kan şekerini yükseltir, düşürmez. Karaciğer ve kaslardaki glikojeni glikoza çevirerek kan şekerini artırır."
+            },
+            {
+                question: "Pankreas ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: [
+                    "Sadece sindirim enzimi salgılar",
+                    "Sadece hormon salgılar",
+                    "Karma bir bezdir",
+                    "Sadece insülin salgılar",
+                    "Midenin önünde bulunur"
+                ],
+                correct: 2,
+                explanation: "Pankreas karma bir bezdir: hem sindirim enzimi (ekzokrin) hem de hormon (endokrin) salgılar."
+            },
+            {
+                question: "İnsülin hormonu hangi hücrelerden salgılanır ve görevi nedir?",
+                options: [
+                    "Alfa hücreleri - Kan şekerini yükseltir",
+                    "Beta hücreleri - Kan şekerini düşürür",
+                    "Delta hücreleri - Sindirimi düzenler",
+                    "Acinar hücreleri - Enzim salgılar",
+                    "Epitel hücreleri - Koruma sağlar"
+                ],
+                correct: 1,
+                explanation: "İnsülin, pankreasın beta hücrelerinden salgılanır ve kan şekerini düşürür. Glukozun hücreye girmesini sağlar."
+            },
+            {
+                question: "Tip I ve Tip II diyabet arasındaki temel fark nedir?",
+                options: [
+                    "Tip I ileri yaşlarda, Tip II gençlerde görülür",
+                    "Tip I'de insülin direnci, Tip II'de insülin eksikliği vardır",
+                    "Tip I'de insülin üretimi yoktur, Tip II'de insülin direnci vardır",
+                    "Tip I diyetle kontrol edilir, Tip II insülin enjeksiyonu gerektirir",
+                    "Tip I daha hafif, Tip II daha ciddidir"
+                ],
+                correct: 2,
+                explanation: "Tip I diyabette pankreasta insülin üreten beta hücreleri tahrip olmuştur, insülin üretimi yoktur. Tip II diyabette insülin direnci vardır."
+            },
+            {
+                question: "Testosteron hormonu ile ilgili aşağıdakilerden hangisi yanlıştır?",
+                options: [
+                    "Testislerden salgılanır",
+                    "Erkeklik özelliklerini oluşturur",
+                    "Sperm üretimini sağlar",
+                    "Kadınlarda salgılanmaz",
+                    "Kas gelişimini destekler"
+                ],
+                correct: 3,
+                explanation: "Testosteron erkeklik hormonudur ama kadınlarda da az miktarda böbrek üstü bezinden salgılanır."
+            },
+            {
+                question: "Östrojen ve progesteron hormonları ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: [
+                    "İkisi de testislerden salgılanır",
+                    "Östrojen gebeliği, progesteron adet döngüsünü sağlar",
+                    "Östrojen kadınlık özelliklerini, progesteron gebeliği destekler",
+                    "İkisi de sadece hamilelikte salgılanır",
+                    "Östrojen erkeklerde de baskındır"
+                ],
+                correct: 2,
+                explanation: "Östrojen kadınlık özelliklerini ve adet döngüsünü, progesteron ise rahmi gebeliğe hazırlar ve gebeliği destekler."
+            },
+            {
+                question: "Epifiz bezi ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: [
+                    "Göğüs boşluğunda bulunur",
+                    "Melatonin hormonu salgılar",
+                    "T-lenfositleri olgunlaştırır",
+                    "Sadece gündüz salgı yapar",
+                    "Yaşla birlikte büyür"
+                ],
+                correct: 1,
+                explanation: "Epifiz bezi beyinde bulunur ve melatonin hormonu salgılar. Melatonin biyoritmi ve uyku döngüsünü düzenler."
+            },
+            {
+                question: "Timüs bezi ile ilgili aşağıdakilerden hangisi yanlıştır?",
+                options: [
+                    "Göğüs boşluğunda bulunur",
+                    "T-lenfositlerin olgunlaştığı yerdir",
+                    "Çocuklukta büyüktür, yaşla küçülür",
+                    "Melatonin hormonu salgılar",
+                    "Bağışıklık sisteminde rol oynar"
+                ],
+                correct: 3,
+                explanation: "Timüs bezi melatonin salgılamaz, timik hormon salgılar. Melatonin epifiz bezinden salgılanır."
+            },
+            {
+                question: "Negatif geri bildirim mekanizması nedir?",
+                options: [
+                    "Hormon seviyesi düşünce üretimin durması",
+                    "Hormon seviyesi yükselince üretimin artması",
+                    "Hormon seviyesi yükselince üretimin durması",
+                    "İki hormonun birbirini desteklemesi",
+                    "Hormonların sinir sistemi tarafından kontrolü"
+                ],
+                correct: 2,
+                explanation: "Negatif geri bildirimde, hormon seviyesi belli bir değere ulaşınca üretim durur. Örneğin tiroksin yükselince TSH salgısı durur."
+            },
+            {
+                question: "Aşağıdaki hormon çiftlerinden hangisi antagonist (zıt) çalışır?",
+                options: [
+                    "İnsülin - Glukagon",
+                    "FSH - LH",
+                    "ACTH - Kortizol",
+                    "TSH - Tiroksin",
+                    "ADH - Aldosteron"
+                ],
+                correct: 0,
+                explanation: "İnsülin ve glukagon antagonist hormonlardır: İnsülin kan şekerini düşürür, glukagon yükseltir."
+            },
+            {
+                question: "Hipotalamusun endokrin sistemdeki rolü nedir?",
+                options: [
+                    "Sadece hipofizi kontrol eder",
+                    "Tüm endokrin bezleri direkt kontrol eder",
+                    "Sadece otonom sinir sistemini kontrol eder",
+                    "Hipofiz ve diğer bazı bezleri kontrol eder",
+                    "Sadece vücut sıcaklığını düzenler"
+                ],
+                correct: 3,
+                explanation: "Hipotalamus, hipofiz bezini ve dolayısıyla diğer endokrin bezleri kontrol eder. Ayrıca vücut sıcaklığı, açlık, susuzluk gibi homeostatik mekanizmaları düzenler."
+            },
+            {
+                question: "Guatr hastalığının temel nedeni nedir?",
+                options: [
+                    "Kalsiyum eksikliği",
+                    "İyot eksikliği",
+                    "Protein eksikliği",
+                    "Vitamin D eksikliği",
+                    "Su eksikliği"
+                ],
+                correct: 1,
+                explanation: "Guatr, tiroit bezinin büyümesidir ve en yaygın nedeni iyot eksikliğidir. İyot, tiroksin hormonunun yapısında bulunur."
+            },
+            {
+                question: "Akromegali hastalığı hangi hormonun yetişkinlikte fazla salgılanması sonucu oluşur?",
+                options: ["TSH", "ACTH", "STH", "ADH", "PRL"],
+                correct: 2,
+                explanation: "Akromegali, yetişkinlikte büyüme hormonunun (STH) fazla salgılanması sonucu el, ayak, yüz kemiklerinde anormal büyüme ile karakterizedir."
+            },
+            {
+                question: "Cushing sendromu hangi hormonun fazlalığında görülür?",
+                options: ["Aldosteron", "Kortizol", "Adrenalin", "Tiroksin", "İnsülin"],
+                correct: 1,
+                explanation: "Cushing sendromu, kortizol hormonunun fazlalığında görülür. Aydede yüzü, kilo artışı, hipertansiyon gibi belirtileri vardır."
+            },
+            {
+                question: "Tetani hastalığı hangi hormonun eksikliğinde görülür?",
+                options: ["Kalsitonin", "Parathormon", "Aldosteron", "Kortizol", "Tiroksin"],
+                correct: 1,
+                explanation: "Tetani, parathormon eksikliğinde kandaki kalsiyumun düşmesi sonucu oluşan ağrılı kas kramplarıdır."
+            },
+            {
+                question: "Melatonin salgısı ne zaman artar?",
+                options: [
+                    "Gündüz, ışıkta",
+                    "Gece, karanlıkta",
+                    "Yemekten sonra",
+                    "Egzersiz sırasında",
+                    "Stres anında"
+                ],
+                correct: 1,
+                explanation: "Melatonin salgısı karanlıkta artar, ışıkta azalır. Bu nedenle uyku-uyanıklık döngüsünü düzenler."
+            },
+            {
+                question: "İnsülin direnci nedir?",
+                options: [
+                    "Pankreasın insülin üretememesi",
+                    "Hücrelerin insüline yanıt vermemesi",
+                    "Karaciğerin glikojen depolayamaması",
+                    "Böbreklerin şeker atamaması",
+                    "İnsülinin çabuk parçalanması"
+                ],
+                correct: 1,
+                explanation: "İnsülin direnci, hücrelerin insüline yeterince yanıt vermemesi durumudur. Tip II diyabetin temel nedenidir."
+            },
+            {
+                question: "Hormonların kan düzeylerinin ölçülmesi hangi amaçla yapılır?",
+                options: [
+                    "Sadece gebelik teşhisi için",
+                    "Sadece diyabet teşhisi için",
+                    "Endokrin bozuklukların teşhisi için",
+                    "Sadece guatr teşhisi için",
+                    "Sadece büyüme bozuklukları için"
+                ],
+                correct: 2,
+                explanation: "Hormon düzeylerinin ölçülmesi, endokrin sistem bozukluklarının (tiroit hastalıkları, diyabet, büyüme bozuklukları vb.) teşhisi için yapılır."
+            },
+            {
+                question: "Aldosteron hormonunun temel görevi nedir?",
+                options: [
+                    "Kan şekerini düzenlemek",
+                    "Stresle başa çıkmak",
+                    "Mineral ve su dengesini sağlamak",
+                    "Büyümeyi sağlamak",
+                    "Metabolizma hızını artırmak"
+                ],
+                correct: 2,
+                explanation: "Aldosteron, böbreklerde sodyumun geri emilimini ve potasyumun atılımını sağlayarak mineral ve su dengesini, dolayısıyla kan basıncını düzenler."
+            },
+            {
+                question: "Prolaktin (PRL) hormonunun görevi nedir?",
+                options: [
+                    "Büyümeyi sağlamak",
+                    "Süt üretimini sağlamak",
+                    "Tiroiti uyarmak",
+                    "Yumurta oluşumunu sağlamak",
+                    "Su dengesini ayarlamak"
+                ],
+                correct: 1,
+                explanation: "Prolaktin, süt bezlerinin gelişimini, süt üretimini ve analık içgüdüsünü sağlar."
+            },
+            {
+                question: "Oksitosin hormonu ile ilgili aşağıdakilerden hangisi doğrudur?",
+                options: [
+                    "Sadece kadınlarda bulunur",
+                    "Doğum kasılmalarını başlatır",
+                    "Kan şekerini düzenler",
+                    "Büyümeyi sağlar",
+                    "Stresle başa çıkmayı sağlar"
+                ],
+                correct: 1,
+                explanation: "Oksitosin, doğum sırasında rahim kasılmalarını başlatır ve doğumdan sonra süt salgılanmasını sağlar. Erkeklerde de bulunur."
+            },
+            {
+                question: "Hipofiz bezi neden 'ana bez' olarak adlandırılır?",
+                options: [
+                    "En büyük bez olduğu için",
+                    "Beyinde bulunduğu için",
+                    "Diğer endokrin bezleri kontrol ettiği için",
+                    "En çok hormon ürettiği için",
+                    "En eski bez olduğu için"
+                ],
+                correct: 2,
+                explanation: "Hipofiz bezi, diğer endokrin bezlerin çoğunu kontrol ettiği için 'ana bez' olarak adlandırılır."
+            },
+            {
+                question: "Endokrin sistem sağlığı için aşağıdakilerden hangisi önerilmez?",
+                options: [
+                    "İyotlu tuz kullanmak",
+                    "Dengeli beslenmek",
+                    "Düzenli uyku uyumak",
+                    "Aşırı stresli ortamlardan kaçınmak",
+                    "Sürekli gece çalışmak"
+                ],
+                correct: 4,
+                explanation: "Sürekli gece çalışmak melatonin dengesini bozar ve endokrin sistem sağlığını olumsuz etkiler. Diğer seçenekler endokrin sağlığı için önerilir."
+            },
+            {
+                question: "Hormonların hedef hücrede etki gösterebilmesi için ne gereklidir?",
+                options: [
+                    "Hücrenin büyük olması",
+                    "Hücrede ilgili hormonun reseptörlerinin olması",
+                    "Hücrenin çok sayıda olması",
+                    "Hücrenin sinir hücresi olması",
+                    "Hücrenin karaciğerde olması"
+                ],
+                correct: 1,
+                explanation: "Hormonlar sadece üzerlerinde ilgili reseptör (alıcı) bulunan hedef hücrelerde etki gösterir."
+            }
+        ];
+
+        let userAnswers = new Array(testQuestions.length).fill(-1);
+
+        function loadTestQuestions() {
+            const container = document.getElementById('test-container');
+            container.innerHTML = '';
+            userAnswers.fill(-1);
+
+            testQuestions.forEach((q, index) => {
+                const letters = ['A', 'B', 'C', 'D', 'E'];
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-card';
+                questionDiv.innerHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <span class="question-number">${index + 1}</span>
+                        <span class="question-text">${q.question}</span>
+                    </div>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option" data-q="${index}" data-opt="${optIndex}">
+                                <div class="option-letter">${letters[optIndex]}</div>
+                                <div>${option}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(questionDiv);
+            });
+
+            // Add event listeners to options
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const qIndex = parseInt(this.getAttribute('data-q'));
+                    const optIndex = parseInt(this.getAttribute('data-opt'));
+                    
+                    // Remove previous selection for this question
+                    const options = document.querySelectorAll(`.option[data-q="${qIndex}"]`);
+                    options.forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.classList.remove('correct', 'wrong');
+                    });
+                    
+                    // Mark selected option
+                    this.classList.add('selected');
+                    userAnswers[qIndex] = optIndex;
+                });
+            });
+        }
+
+        document.getElementById('submit-test').addEventListener('click', () => {
+            let score = 0;
+            const total = testQuestions.length;
+
+            // Check answers
+            testQuestions.forEach((q, index) => {
+                const options = document.querySelectorAll(`.option[data-q="${index}"]`);
+                if (userAnswers[index] === q.correct) {
+                    score++;
+                    options[q.correct].classList.add('correct');
+                } else if (userAnswers[index] !== -1) {
+                    options[userAnswers[index]].classList.add('wrong');
+                    options[q.correct].classList.add('correct');
+                } else {
+                    // If not answered, still show correct answer
+                    options[q.correct].classList.add('correct');
+                }
+            });
+
+            // Show results
+            const resultDiv = document.getElementById('test-result');
+            document.getElementById('score').textContent = `${score}`;
+            
+            let message = '';
+            if (score === total) {
+                message = '🎉 MÜKEMMEL! Tüm soruları doğru cevapladınız! Endokrin sistemini tamamen öğrenmişsiniz.';
+            } else if (score >= total * 0.85) {
+                message = '👏 ÇOK İYİ! Endokrin sistemini çok iyi anlamışsınız. Sadece birkaç detay üzerinde çalışın.';
+            } else if (score >= total * 0.70) {
+                message = '👍 İYİ! Konuyu anlamışsınız ama bazı noktaları tekrar etmeniz faydalı olacaktır.';
+            } else if (score >= total * 0.50) {
+                message = '📚 ORTA SEVİYE! Endokrin sistemin temellerini anlamışsınız ama detaylar üzerinde çalışmalısınız.';
+            } else {
+                message = '📖 GELİŞTİRME GEREKİYOR! Konuyu tekrar çalışmanızı öneririm. Bilgi kartları ve özetlerden başlayın.';
+            }
+            
+            document.getElementById('test-message').textContent = message;
+            
+            // Show detailed result
+            const correctCount = score;
+            const wrongCount = userAnswers.filter((ans, idx) => ans !== -1 && ans !== testQuestions[idx].correct).length;
+            const emptyCount = userAnswers.filter(ans => ans === -1).length;
+            
+            document.getElementById('detailed-result').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                    <div style="background: #28a745; padding: 15px; border-radius: 8px; color: white;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${correctCount}</div>
+                        <div>Doğru</div>
+                    </div>
+                    <div style="background: #dc3545; padding: 15px; border-radius: 8px; color: white;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${wrongCount}</div>
+                        <div>Yanlış</div>
+                    </div>
+                    <div style="background: #6c757d; padding: 15px; border-radius: 8px; color: white;">
+                        <div style="font-size: 1.5rem; font-weight: bold;">${emptyCount}</div>
+                        <div>Boş</div>
+                    </div>
+                </div>
+                <div style="font-size: 1.1rem; opacity: 0.9;">
+                    Başarı Oranı: <strong>${Math.round((score/total)*100)}%</strong>
+                </div>
+            `;
+            
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('restart-test').addEventListener('click', () => {
+            loadTestQuestions();
+            document.getElementById('test-result').style.display = 'none';
+        });
+
+        document.getElementById('clear-selections').addEventListener('click', () => {
+            loadTestQuestions();
+        });
+
+        // Keyboard shortcuts for flashcards
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('flashcard-section').classList.contains('active')) {
+                switch(e.key) {
+                    case 'ArrowLeft':
+                        e.preventDefault();
+                        if (currentCardIndex > 0) {
+                            currentCardIndex--;
+                            loadCard();
+                        }
+                        break;
+                    case 'ArrowRight':
+                        e.preventDefault();
+                        if (currentCardIndex < totalCards - 1) {
+                            currentCardIndex++;
+                            loadCard();
+                        }
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        flashcardElement.classList.toggle('flipped');
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
